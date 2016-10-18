@@ -46,6 +46,10 @@ SOFTWARE.
 */
 int main(void)
 {
+
+  adc_init();
+  led_init();
+
   int i = 0;
 
   /**

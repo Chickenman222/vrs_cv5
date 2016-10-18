@@ -35,17 +35,8 @@ void adc_init()
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADCx regular channel8 configuration */
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_16Cycles);
-	/* Enable the ADC */
-	ADC_Cmd(ADC1, ENABLE);
-	/* Wait until the ADC1 is ready */
-	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_ADONS) == RESET)
-	{
-	}
-	/* Start ADC Software Conversion */
-	ADC_SoftwareStartConv(ADC1);
-}
 
-void adc_nvic_inic(){
+	ADC_ITConfig(ADC1, ADC_IT_EOC,ENABLE);
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -55,8 +46,16 @@ void adc_nvic_inic(){
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
 	NVIC_Init(&NVIC_InitStructure);
-	ADC_ITConfig(ADC1,ADC_IT_EOC | ADC_IT_OVR,ENABLE);
 
+
+	/* Enable the ADC */
+	ADC_Cmd(ADC1, ENABLE);
+	/* Wait until the ADC1 is ready */
+	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_ADONS) == RESET)
+	{
+	}
+	/* Start ADC Software Conversion */
+	ADC_SoftwareStartConv(ADC1);
 }
 
 void led_init(){
@@ -70,3 +69,13 @@ void led_init(){
 	GPIO_LED.GPIO_Speed = GPIO_Speed_40MHz;
 	GPIO_Init(GPIOA,&GPIO_LED);
 }
+
+void ADC1_IRQHandler (void)
+{
+
+	if(ADC1->SR & (ADC_SR_EOC))
+	{
+		value = ADC1->DR;
+	}
+}
+

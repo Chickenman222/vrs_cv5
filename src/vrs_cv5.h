@@ -11,9 +11,11 @@
 #include <stddef.h>
 #include "stm32l1xx.h"
 
+//definicie globalnych premennych
+uint16_t value;
+
 // definicie funkcii
 void adc_init();
-void adc_nvic_inic();
 void led_init();
 
 #endif /* VRS_CV5_H_ */
