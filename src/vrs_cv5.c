@@ -70,6 +70,41 @@ void led_init(){
 	GPIO_Init(GPIOA,&GPIO_LED);
 }
 
+void usart_init(){
+
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+
+	GPIO_InitTypeDef GPIO_usrt;
+
+	GPIO_usrt.GPIO_Pin = GPIO_Pin_2;
+	GPIO_usrt.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_usrt.GPIO_OType = GPIO_OType_PP;
+	GPIO_usrt.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_usrt.GPIO_Speed = GPIO_Speed_40MHz;
+
+	GPIO_Init(GPIOA,&GPIO_usrt);
+
+	GPIO_usrt.GPIO_Pin = GPIO_Pin_3;
+	GPIO_usrt.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_usrt.GPIO_OType = GPIO_OType_PP;
+	GPIO_usrt.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_usrt.GPIO_Speed = GPIO_Speed_40MHz;
+	GPIO_Init(GPIOA,&GPIO_usrt);
+
+	GPIO_PinAFConfig(GPIOA,GPIO_PinSource2,GPIO_AF_USART1);
+	GPIO_PinAFConfig(GPIOA,GPIO_PinSource3,GPIO_AF_USART1);
+
+	USART_InitTypeDef USART_InitStructure;
+	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART1, &USART_InitStructure);
+}
+
 void ADC1_IRQHandler (void)
 {
 

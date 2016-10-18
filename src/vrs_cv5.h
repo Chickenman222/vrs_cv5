@@ -17,5 +17,6 @@ uint16_t value;
 // definicie funkcii
 void adc_init();
 void led_init();
+void usart_init();
 
 #endif /* VRS_CV5_H_ */
