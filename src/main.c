@@ -27,10 +27,7 @@ SOFTWARE.
 */
 
 /* Includes */
-#include <stddef.h>
 #include <vrs_cv5.h>
-#include "stm32l1xx.h"
-
 
 /* Private typedef */
 /* Private define  */

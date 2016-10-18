@@ -4,10 +4,16 @@
  *  Created on: 18. 10. 2016
  *      Author: Asus
  */
-
 #ifndef VRS_CV5_H_
 #define VRS_CV5_H_
 
+//includes
+#include <stddef.h>
+#include "stm32l1xx.h"
 
+// definicie funkcii
+void adc_init();
+void adc_nvic_inic();
+void led_init();
 
 #endif /* VRS_CV5_H_ */
