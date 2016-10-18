@@ -77,19 +77,12 @@ void usart_init(){
 
 	GPIO_InitTypeDef GPIO_usrt;
 
-	GPIO_usrt.GPIO_Pin = GPIO_Pin_2;
+	GPIO_usrt.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
 	GPIO_usrt.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_usrt.GPIO_OType = GPIO_OType_PP;
 	GPIO_usrt.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_usrt.GPIO_Speed = GPIO_Speed_40MHz;
 
-	GPIO_Init(GPIOA,&GPIO_usrt);
-
-	GPIO_usrt.GPIO_Pin = GPIO_Pin_3;
-	GPIO_usrt.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_usrt.GPIO_OType = GPIO_OType_PP;
-	GPIO_usrt.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_usrt.GPIO_Speed = GPIO_Speed_40MHz;
 	GPIO_Init(GPIOA,&GPIO_usrt);
 
 	GPIO_PinAFConfig(GPIOA,GPIO_PinSource2,GPIO_AF_USART1);
@@ -103,6 +96,22 @@ void usart_init(){
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART1, &USART_InitStructure);
+
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+
+	  /* Enable the USARTx Interrupt */
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	  //choosing which event should cause interrupt
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	  /* Enable USART */
+
+	USART_Cmd(USART1, ENABLE);
 }
 
 void ADC1_IRQHandler (void)
@@ -113,4 +122,14 @@ void ADC1_IRQHandler (void)
 		value = ADC1->DR;
 	}
 }
+
+void USART1_IRQHandler(void)
+{
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
+	{
+		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
+		rec_data = USART_ReceiveData(USART2);
+    }
+}
+
 

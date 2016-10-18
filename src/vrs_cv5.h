@@ -13,6 +13,7 @@
 
 //definicie globalnych premennych
 uint16_t value;
+uint8_t rec_data;
 
 // definicie funkcii
 void adc_init();

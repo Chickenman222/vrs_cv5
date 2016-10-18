@@ -49,6 +49,9 @@ int main(void)
 
   adc_init();
   led_init();
+  usart_init();
+
+  uint8_t data = 100;
 
   int i = 0;
 
@@ -75,7 +78,8 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	i++;
+	USART_SendData(USART1,data);
+	for(i=0;i<500000;i++);
   }
   return 0;
 }
