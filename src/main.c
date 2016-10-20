@@ -50,8 +50,9 @@ int main(void)
   adc_init();
   led_init();
   usart_init();
-  rec_data = 'a';
 
+  adc_constant = 3.3/4096;
+  mode = 0;
   /**
   *  IMPORTANT NOTE!
   *  See the <system_*.c> file and how/if the SystemInit() function updates
@@ -71,13 +72,12 @@ int main(void)
 
   /* TODO - Add your application code here */
 
-
   /* Infinite loop */
   while (1)
   {
-	USART_SendData(USART2, rec_data);
-	while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
-	for(int i = 0; i < 500000;i++);
+	  for(int i = 0; i < 100000;i++);
+	  uloha2_function();
+	  USART_send_data(text);
   }
   return 0;
 }

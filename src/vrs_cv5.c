@@ -115,18 +115,49 @@ void usart_init(){
 
 }
 
+void USART_send_data(char text[]){
+	int i =0;
+	while(text[i] != '\0'){
+		USART_SendData(USART2, text[i]);
+		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+		i++;
+	}
+	USART_SendData(USART2,'\r');
+	while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+}
+
+void uloha2_function(){
+
+	if (rec_data == 'm'){
+		mode = !mode;
+		rec_data = ' ';
+	}
+
+	switch(mode){
+		case 0:	{
+			sprintf(text,"%d", adc_value);
+		}
+		break;
+		case 1: {
+			float a = adc_value*adc_constant;
+			uint8_t num1 = (uint8_t)a;
+			sprintf(text,"%d.%dV", num1, (uint8_t)((a-num1)*100));
+		}
+		break;
+	}
+}
+
 void ADC1_IRQHandler (void)
 {
 
 	if(ADC1->SR & (ADC_SR_EOC))
 	{
-		value = ADC1->DR;
+		adc_value = ADC1->DR;
 	}
 }
 
 void USART2_IRQHandler(void)
 {
-	uint16_t pom;
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{
 		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
