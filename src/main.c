@@ -50,18 +50,15 @@ int main(void)
   adc_init();
   led_init();
   usart_init();
-
-  uint8_t data = 100;
-
-  int i = 0;
+  rec_data = 'a';
 
   /**
   *  IMPORTANT NOTE!
-  *  See the <system_*.c> file and how/if the SystemInit() function updates 
-  *  SCB->VTOR register. Sometimes the symbol VECT_TAB_SRAM needs to be defined 
-  *  when building the project if code has been located to RAM and interrupts 
+  *  See the <system_*.c> file and how/if the SystemInit() function updates
+  *  SCB->VTOR register. Sometimes the symbol VECT_TAB_SRAM needs to be defined
+  *  when building the project if code has been located to RAM and interrupts
   *  are used. Otherwise the interrupt table located in flash will be used.
-  *  E.g.  SCB->VTOR = 0x20000000;  
+  *  E.g.  SCB->VTOR = 0x20000000;
   */
 
   /**
@@ -78,8 +75,9 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	USART_SendData(USART1,data);
-	for(i=0;i<500000;i++);
+	USART_SendData(USART2, rec_data);
+	while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+	for(int i = 0; i < 500000;i++);
   }
   return 0;
 }

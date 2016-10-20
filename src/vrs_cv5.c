@@ -34,14 +34,14 @@ void adc_init()
 	ADC_InitStructure.ADC_NbrOfConversion = 1;
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADCx regular channel8 configuration */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_16Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_384Cycles);
 
 	ADC_ITConfig(ADC1, ADC_IT_EOC,ENABLE);
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	NVIC_InitTypeDef NVIC_InitStructure;
-	NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn; //zoznam preruöenÌ n·jdete v s˙bore stm32l1xx.h
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn; //zoznam preru≈°en√≠ n√°jdete v s√∫bore stm32l1xx.h
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
@@ -73,7 +73,9 @@ void led_init(){
 void usart_init(){
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);
 
 	GPIO_InitTypeDef GPIO_usrt;
 
@@ -85,8 +87,7 @@ void usart_init(){
 
 	GPIO_Init(GPIOA,&GPIO_usrt);
 
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource2,GPIO_AF_USART1);
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource3,GPIO_AF_USART1);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 
 	USART_InitTypeDef USART_InitStructure;
 	USART_InitStructure.USART_BaudRate = 9600;
@@ -95,23 +96,23 @@ void usart_init(){
 	USART_InitStructure.USART_Parity = USART_Parity_No;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_Init(USART1, &USART_InitStructure);
+	USART_Init(USART2, &USART_InitStructure);
+	USART_Cmd(USART2, ENABLE);
 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	//interrupt
+	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 
 	  /* Enable the USARTx Interrupt */
 	NVIC_InitTypeDef NVIC_InitStructure;
-
-	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-	  //choosing which event should cause interrupt
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-	  /* Enable USART */
 
-	USART_Cmd(USART1, ENABLE);
+
 }
 
 void ADC1_IRQHandler (void)
@@ -123,8 +124,9 @@ void ADC1_IRQHandler (void)
 	}
 }
 
-void USART1_IRQHandler(void)
+void USART2_IRQHandler(void)
 {
+	uint16_t pom;
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{
 		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
