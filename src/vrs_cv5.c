@@ -101,9 +101,9 @@ void usart_init(){
 
 	//interrupt
 	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+	USART_ITConfig(USART2, USART_IT_TC, ENABLE);
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-
 	  /* Enable the USARTx Interrupt */
 	NVIC_InitTypeDef NVIC_InitStructure;
 	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
@@ -112,11 +112,10 @@ void usart_init(){
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-
 }
 
 void USART_send_data(char text[]){
-	int i =0;
+	i = 0;
 	while(text[i] != '\0'){
 		USART_SendData(USART2, text[i]);
 		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
@@ -124,6 +123,13 @@ void USART_send_data(char text[]){
 	}
 	USART_SendData(USART2,'\r');
 	while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+}
+
+void USART_send_data_NVIC(char text[]){
+	if (i == 0){
+		i = 1;
+		USART_SendData(USART2,text[0]);
+	}
 }
 
 void uloha2_function(){
@@ -147,15 +153,16 @@ void uloha2_function(){
 	}
 }
 
-void ADC1_IRQHandler (void)
+//handler prerusenia adc prevodnika
+void ADC1_IRQHandler(void)
 {
-
 	if(ADC1->SR & (ADC_SR_EOC))
 	{
 		adc_value = ADC1->DR;
 	}
 }
 
+//handler prerusenia usart prijmania
 void USART2_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
@@ -163,6 +170,18 @@ void USART2_IRQHandler(void)
 		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
 		rec_data = USART_ReceiveData(USART2);
     }
+	else if(USART_GetITStatus(USART2, USART_IT_TC) != RESET)
+	{
+		USART_ClearITPendingBit(USART2, USART_IT_TC);
+		if (i > 0){
+			if(text[i] == '\0'){
+				USART_SendData(USART2,'\r');
+				i = 0;
+			}
+			else{
+				USART_SendData(USART2,text[i]);
+				i++;
+			}
+		}
+	}
 }
-
-

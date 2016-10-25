@@ -16,6 +16,8 @@
 //definicie globalnych premennych
 uint16_t adc_value;
 uint16_t rec_data;
+int i ;
+uint8_t buffer_ready;
 char text[10];
 float adc_constant;
 uint8_t mode;
@@ -25,6 +27,7 @@ void adc_init();
 void led_init();
 void usart_init();
 void USART_send_data(char text[]);
+void USART_send_data_NVIC(char text[]);
 void uloha2_function();
 
 #endif /* VRS_CV5_H_ */

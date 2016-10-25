@@ -46,13 +46,17 @@ SOFTWARE.
 */
 int main(void)
 {
+  int c;
+  adc_constant = 3.3/4096;
+  mode = 0;
 
+  i = 0;
+  buffer_ready = 1;
   adc_init();
   led_init();
   usart_init();
+  USART_ClearITPendingBit(USART2, USART_IT_TC);
 
-  adc_constant = 3.3/4096;
-  mode = 0;
   /**
   *  IMPORTANT NOTE!
   *  See the <system_*.c> file and how/if the SystemInit() function updates
@@ -75,9 +79,10 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	  for(int i = 0; i < 100000;i++);
 	  uloha2_function();
-	  USART_send_data(text);
+	  //USART_send_data(text);
+	  USART_send_data_NVIC(text);
+	  for(c = 0; c < 10000;c++);
   }
   return 0;
 }
