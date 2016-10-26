@@ -24,7 +24,6 @@ uint8_t mode;
 
 // definicie funkcii
 void adc_init();
-void led_init();
 void usart_init();
 void USART_send_data(char text[]);
 void USART_send_data_NVIC(char text[]);

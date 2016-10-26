@@ -51,9 +51,7 @@ int main(void)
   mode = 0;
 
   i = 0;
-  buffer_ready = 1;
   adc_init();
-  led_init();
   usart_init();
   USART_ClearITPendingBit(USART2, USART_IT_TC);
 
@@ -79,10 +77,10 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
+	  for(c = 0; c < 50000;c++);
 	  uloha2_function();
 	  //USART_send_data(text);
 	  USART_send_data_NVIC(text);
-	  for(c = 0; c < 10000;c++);
   }
   return 0;
 }

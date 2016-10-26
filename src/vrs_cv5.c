@@ -5,7 +5,7 @@
  *      Author: Asus
  */
 #include <vrs_cv5.h>
-
+//init adc prevodnika
 void adc_init()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -58,18 +58,7 @@ void adc_init()
 	ADC_SoftwareStartConv(ADC1);
 }
 
-void led_init(){
-
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
-	GPIO_InitTypeDef GPIO_LED;
-	GPIO_LED.GPIO_Pin = GPIO_Pin_5;
-	GPIO_LED.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_LED.GPIO_OType = GPIO_OType_PP;
-	GPIO_LED.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_LED.GPIO_Speed = GPIO_Speed_40MHz;
-	GPIO_Init(GPIOA,&GPIO_LED);
-}
-
+// init usartu a preruseni
 void usart_init(){
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
@@ -113,7 +102,7 @@ void usart_init(){
 	NVIC_Init(&NVIC_InitStructure);
 
 }
-
+//start blokovanej usart komunikacie
 void USART_send_data(char text[]){
 	i = 0;
 	while(text[i] != '\0'){
@@ -124,14 +113,14 @@ void USART_send_data(char text[]){
 	USART_SendData(USART2,'\r');
 	while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
 }
-
+// start usart komunikacie cez prerusenia
 void USART_send_data_NVIC(char text[]){
 	if (i == 0){
 		i = 1;
 		USART_SendData(USART2,text[0]);
 	}
 }
-
+// hlavna cast ulohy plnenie premennej text
 void uloha2_function(){
 
 	if (rec_data == 'm'){
